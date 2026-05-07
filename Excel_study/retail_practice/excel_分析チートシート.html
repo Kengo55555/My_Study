@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Excel データ分析 チートシート</title>
+<style>
+  :root {
+    --blue-dark:#1F4E79; --blue:#2E75B6; --blue-light:#D6E4F7;
+    --green-dark:#375623; --green:#548235; --green-light:#E2EFDA;
+    --yellow:#FFF2CC; --yellow-dark:#7F6000;
+    --orange:#C55A11; --gray-bg:#F5F5F5; --gray-border:#CCCCCC;
+    --red:#C00000;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:"Hiragino Sans","Yu Gothic",sans-serif; font-size:13px; color:#222; background:#FAFAFA; }
+  .page-wrap { max-width:1100px; margin:0 auto; padding:24px 20px; }
+
+  h1 { font-size:22px; color:var(--blue-dark); border-left:6px solid var(--blue); padding-left:12px; margin-bottom:6px; }
+  .subtitle { color:#666; font-size:12px; margin-bottom:24px; padding-left:18px; }
+
+  h2 { font-size:15px; background:var(--blue-dark); color:#fff; padding:6px 12px; border-radius:4px 4px 0 0; margin-top:28px; }
+  h3 { font-size:13px; color:var(--blue-dark); font-weight:bold; margin:14px 0 4px; border-bottom:2px solid var(--blue-light); padding-bottom:3px; }
+
+  .section { background:#fff; border:1px solid var(--gray-border); border-radius:0 0 4px 4px; padding:14px 16px; margin-bottom:4px; }
+
+  table { width:100%; border-collapse:collapse; margin:8px 0; font-size:12px; }
+  th { background:var(--blue); color:#fff; padding:6px 8px; text-align:left; }
+  td { padding:5px 8px; border-bottom:1px solid #E8E8E8; vertical-align:top; }
+  tr:nth-child(even) td { background:var(--blue-light); }
+  tr:hover td { background:#FFF9C4; }
+
+  code { font-family:"Courier New",Consolas,monospace; background:var(--gray-bg); border:1px solid #DDD;
+         border-radius:3px; padding:1px 5px; font-size:11.5px; color:var(--blue-dark); white-space:nowrap; }
+  pre  { background:var(--gray-bg); border:1px solid #DDD; border-radius:4px; padding:10px 12px;
+         font-family:"Courier New",monospace; font-size:11.5px; overflow-x:auto; line-height:1.6; }
+  pre .comment { color:#888; font-style:italic; }
+
+  .tip  { background:var(--green-light); border-left:4px solid var(--green); padding:8px 10px; border-radius:0 4px 4px 0; margin:8px 0; font-size:12px; }
+  .warn { background:#FFF0E0; border-left:4px solid var(--orange); padding:8px 10px; border-radius:0 4px 4px 0; margin:8px 0; font-size:12px; }
+  .note { background:var(--yellow); border-left:4px solid var(--yellow-dark); padding:8px 10px; border-radius:0 4px 4px 0; margin:8px 0; font-size:12px; }
+
+  .badge-func  { display:inline-block; background:var(--blue-dark); color:#fff; border-radius:3px; padding:1px 6px; font-size:10px; font-weight:bold; margin-right:4px; }
+  .badge-new   { display:inline-block; background:var(--green); color:#fff; border-radius:3px; padding:1px 6px; font-size:10px; font-weight:bold; margin-right:4px; }
+  .badge-array { display:inline-block; background:var(--orange); color:#fff; border-radius:3px; padding:1px 6px; font-size:10px; font-weight:bold; margin-right:4px; }
+
+  .cols2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .cols3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+  @media(max-width:700px){ .cols2,.cols3{ grid-template-columns:1fr; } }
+
+  .formula-box { background:#F0F7FF; border:1px solid var(--blue-light); border-radius:4px; padding:10px; margin:8px 0; }
+  .formula-box .syntax { font-size:13px; font-weight:bold; color:var(--blue-dark); font-family:"Courier New",monospace; margin-bottom:6px; }
+  .formula-box .args { font-size:11.5px; color:#444; }
+  .formula-box .args span { color:var(--orange); font-weight:bold; }
+
+  .toc { background:#F0F7FF; border:1px solid var(--blue-light); border-radius:4px; padding:12px 16px; margin-bottom:20px; }
+  .toc h4 { color:var(--blue-dark); margin-bottom:6px; }
+  .toc ul { list-style:none; columns:2; }
+  .toc li { padding:2px 0; }
+  .toc a { color:var(--blue); text-decoration:none; }
+  .toc a:hover { text-decoration:underline; }
+
+  .result-tag { font-size:11px; color:#888; }
+  strong { color:var(--red); }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+<h1>Excel データ分析 チートシート</h1>
+<p class="subtitle">小売データ分析演習ブック対応 ／ カンニング用リファレンス</p>
+
+<!-- TOC -->
+<div class="toc">
+  <h4>目次</h4>
+  <ul>
+    <li><a href="#agg">① 集計関数（SUM / SUMIF / SUMIFS / SUMPRODUCT）</a></li>
+    <li><a href="#count">② カウント関数（COUNT / COUNTIF / COUNTIFS）</a></li>
+    <li><a href="#avg">③ 平均関数（AVERAGE / AVERAGEIF / AVERAGEIFS）</a></li>
+    <li><a href="#lookup">④ 参照関数（VLOOKUP / XLOOKUP / INDEX+MATCH）</a></li>
+    <li><a href="#date">⑤ 日付関数（YEAR / MONTH / DATE / EOMONTH）</a></li>
+    <li><a href="#stat">⑥ 統計関数（MAX / MIN / MEDIAN / STDEV / PERCENTILE）</a></li>
+    <li><a href="#rank">⑦ ランキング（LARGE / SMALL / RANK）</a></li>
+    <li><a href="#text">⑧ テキスト（TRIM / LEFT / MID / SUBSTITUTE / TEXT）</a></li>
+    <li><a href="#error">⑨ エラー処理（IFERROR / IFNA / IF）</a></li>
+    <li><a href="#tips">⑩ 実務 Tips（絶対参照 / 混合参照 / テーブル）</a></li>
+    <li><a href="#patterns">⑪ よく使うパターン集</a></li>
+  </ul>
+</div>
+
+<!-- ① 集計 -->
+<h2 id="agg">① 集計関数</h2>
+<div class="section">
+
+  <h3>SUM ― 単純合計</h3>
+  <pre>=SUM(J2:J1001)          <span class="comment"># J列全合計</span>
+=SUM(J:J)               <span class="comment"># 列全体（ヘッダ行は自動スキップ）</span></pre>
+
+  <h3>SUMIF ― 条件1つの合計</h3>
+  <div class="formula-box">
+    <div class="syntax">=SUMIF( <span style="color:var(--orange)">条件範囲</span>, <span style="color:var(--green-dark)">条件</span>, <span style="color:var(--blue)">合計範囲</span> )</div>
+  </div>
+  <pre>=SUMIF(F:F, "家電", J:J)                <span class="comment"># カテゴリ=家電の売上合計</span>
+=SUMIF(J:J, ">10000", J:J)             <span class="comment"># 10,000円超の合計</span>
+=SUMIF(E:E, A2, J:J)                   <span class="comment"># A2の地域に一致する合計（セル参照）</span></pre>
+  <div class="tip">条件が1つならSUMIF。条件に演算子を使う場合は <code>"&gt;10000"</code> のように文字列で囲む。</div>
+
+  <h3>SUMIFS ― 複数条件の合計</h3>
+  <div class="formula-box">
+    <div class="syntax">=SUMIFS( <span style="color:var(--blue)">合計範囲</span>, <span style="color:var(--orange)">条件範囲1</span>, <span style="color:var(--green-dark)">条件1</span>, <span style="color:var(--orange)">条件範囲2</span>, <span style="color:var(--green-dark)">条件2</span>, … )</div>
+    <div class="args">※ SUMIFと引数順が違う！ <span>合計範囲が最初</span></div>
+  </div>
+  <pre>=SUMIFS(J:J, D:D,"ゴールド", E:E,"東京")
+<span class="comment"># 会員ランク=ゴールド かつ 地域=東京 の売上合計</span>
+
+=SUMIFS(J:J, E:E,$A2, F:F,B$1)
+<span class="comment"># クロス集計用：行方向に地域($A2)、列方向にカテゴリ(B$1)で参照</span>
+
+=SUMIFS(J:J, B:B,">="&DATE(2025,4,1), B:B,"<"&DATE(2025,7,1))
+<span class="comment"># 日付範囲条件：2025年Q2（4〜6月）の合計</span></pre>
+
+  <h3>SUMPRODUCT ― 配列演算で集計（多用途）</h3>
+  <div class="formula-box">
+    <div class="syntax">=SUMPRODUCT( 配列1, 配列2, … )</div>
+    <div class="args">各配列を要素ごとに掛け算して合計。条件は <span>(条件式)*1</span> で0/1に変換</div>
+  </div>
+  <pre>=SUMPRODUCT(H2:H1001, I2:I1001)
+<span class="comment"># 単価×数量の合計（小計列なしで総売上）</span>
+
+=SUMPRODUCT((MONTH(B2:B1001)=4) * J2:J1001)
+<span class="comment"># 4月の売上合計（SUMIFS不可のMONTH条件をここで使う）</span>
+
+=SUMPRODUCT((E2:E1001="東京") * (F2:F1001="家電") * J2:J1001)
+<span class="comment"># AND条件は * （乗算）、OR条件は + （加算）で表現</span></pre>
+  <div class="warn">範囲は同じ行数にそろえること。列全体指定（J:J）はSUMPRODUCTでは使わない（重い）。</div>
+
+</div>
+
+<!-- ② カウント -->
+<h2 id="count">② カウント関数</h2>
+<div class="section">
+  <table>
+    <tr><th>関数</th><th>用途</th><th>例</th></tr>
+    <tr><td><code>COUNT</code></td><td>数値セルの個数</td><td><code>=COUNT(J2:J1001)</code></td></tr>
+    <tr><td><code>COUNTA</code></td><td>空白以外の個数</td><td><code>=COUNTA(A2:A1001)</code></td></tr>
+    <tr><td><code>COUNTBLANK</code></td><td>空白セルの個数</td><td><code>=COUNTBLANK(D2:D1001)</code></td></tr>
+    <tr><td><code>COUNTIF</code></td><td>条件1つでカウント</td><td><code>=COUNTIF(E:E,"東京")</code></td></tr>
+    <tr><td><code>COUNTIFS</code></td><td>複数条件でカウント</td><td><code>=COUNTIFS(E:E,"東京",D:D,"ゴールド")</code></td></tr>
+  </table>
+  <pre>=COUNTIF(J:J, ">50000")            <span class="comment"># 5万円超の取引件数</span>
+=COUNTIFS(F:F,"家電", K:K,"クレジットカード")
+<span class="comment"># 家電 かつ クレジットカード の件数</span>
+
+=SUMPRODUCT((MONTH(B2:B1001)=1)*1)
+<span class="comment"># 1月の取引件数（COUNTIFSは日付のMONTH条件が不可→SUMPRODUCT）</span></pre>
+</div>
+
+<!-- ③ 平均 -->
+<h2 id="avg">③ 平均関数</h2>
+<div class="section">
+  <div class="formula-box">
+    <div class="syntax">=AVERAGEIF( 条件範囲, 条件, 平均範囲 )</div>
+    <div class="syntax">=AVERAGEIFS( 平均範囲, 条件範囲1, 条件1, … )</div>
+  </div>
+  <pre>=AVERAGEIF(D:D, "ゴールド", J:J)
+<span class="comment"># ゴールド会員の平均購入金額</span>
+
+=AVERAGEIFS(J:J, E:E,"東京", F:F,"家電")
+<span class="comment"># 東京×家電 の平均購入金額</span>
+
+=IFERROR(AVERAGEIF(D:D, A2, J:J), 0)
+<span class="comment"># 該当なし（#DIV/0!）を0に置換</span></pre>
+  <div class="tip">AVERAGEIFS は SUMIFS と引数順が同じ（平均範囲が最初）。</div>
+</div>
+
+<!-- ④ 参照 -->
+<h2 id="lookup">④ 参照関数</h2>
+<div class="section">
+
+  <h3>VLOOKUP ― 縦方向検索（古典的手法）</h3>
+  <div class="formula-box">
+    <div class="syntax">=VLOOKUP( 検索値, テーブル範囲, 列番号, FALSE )</div>
+    <div class="args">列番号: テーブルの左端列=1 として数える ／ <span>第4引数は必ずFALSE（完全一致）</span></div>
+  </div>
+  <pre>=VLOOKUP(A2, '2_商品マスタ'!$A:$D, 2, FALSE)
+<span class="comment"># A2の商品コードで商品名（2列目）を検索</span>
+
+=VLOOKUP(A2, '2_商品マスタ'!$A:$D, 4, FALSE)
+<span class="comment"># 標準単価（4列目）を検索</span></pre>
+  <div class="warn">列挿入で列番号がズレる。マスタを変更した場合は必ず確認。</div>
+
+  <h3><span class="badge-new">365/2021</span> XLOOKUP ― 現代的な参照</h3>
+  <div class="formula-box">
+    <div class="syntax">=XLOOKUP( 検索値, 検索範囲, 戻り範囲, [見つからない場合], [一致モード] )</div>
+  </div>
+  <pre>=XLOOKUP(A2, '2_商品マスタ'!$A:$A, '2_商品マスタ'!$B:$B, "該当なし")
+<span class="comment"># 商品コードで商品名を検索、未登録は「該当なし」</span>
+
+=XLOOKUP(A2, '2_商品マスタ'!$A:$A, '2_商品マスタ'!$B:$D)
+<span class="comment"># 複数列まとめて返すことも可能（商品名・カテゴリ・単価）</span></pre>
+  <div class="tip">VLOOKUPより列挿入に強く、未検索時の表示も指定しやすい。</div>
+
+  <h3>INDEX + MATCH ― 柔軟な2次元検索</h3>
+  <div class="formula-box">
+    <div class="syntax">=INDEX( 戻り範囲, MATCH( 検索値, 検索範囲, 0 ) )</div>
+  </div>
+  <pre>=INDEX('1_売上データ'!A:A, MATCH(B2,'1_売上データ'!J:J, 0))
+<span class="comment"># 売上金額がB2と一致する行の取引IDを返す</span>
+
+=INDEX('2_商品マスタ'!B:B, MATCH("ダンベル",'2_商品マスタ'!B:B, 0))
+<span class="comment"># 商品名「ダンベル」の行を特定してB列を返す</span></pre>
+  <div class="tip">MATCH の第3引数は <code>0</code>（完全一致）が鉄則。1/-1は並び順前提になる。</div>
+
+</div>
+
+<!-- ⑤ 日付 -->
+<h2 id="date">⑤ 日付関数</h2>
+<div class="section">
+  <table>
+    <tr><th>関数</th><th>構文</th><th>例・結果</th></tr>
+    <tr><td><code>YEAR</code></td><td><code>=YEAR(B2)</code></td><td>2025</td></tr>
+    <tr><td><code>MONTH</code></td><td><code>=MONTH(B2)</code></td><td>1〜12</td></tr>
+    <tr><td><code>DAY</code></td><td><code>=DAY(B2)</code></td><td>1〜31</td></tr>
+    <tr><td><code>DATE</code></td><td><code>=DATE(2025,4,1)</code></td><td>2025/4/1 のシリアル値</td></tr>
+    <tr><td><code>EOMONTH</code></td><td><code>=EOMONTH(B2, 0)</code></td><td>B2の月末日（1=翌月末）</td></tr>
+    <tr><td><code>WEEKDAY</code></td><td><code>=WEEKDAY(B2, 2)</code></td><td>1=月〜7=日（第2引数2）</td></tr>
+    <tr><td><code>TEXT</code></td><td><code>=TEXT(B2,"yyyy/mm")</code></td><td>"2025/01"（文字列）</td></tr>
+    <tr><td><code>DATEDIF</code></td><td><code>=DATEDIF(A2,TODAY(),"M")</code></td><td>経過月数</td></tr>
+    <tr><td><code>NETWORKDAYS</code></td><td><code>=NETWORKDAYS(A2,B2,祝日)</code></td><td>営業日数</td></tr>
+    <tr><td><code>WORKDAY</code></td><td><code>=WORKDAY(A2,10,祝日)</code></td><td>10営業日後</td></tr>
+  </table>
+
+  <h3>月別・四半期別集計のパターン</h3>
+  <pre><span class="comment"># 月列を別途作ってSUMIFS（高速）</span>
+<span class="comment"># 作業列: =MONTH(B2) → 下方向コピー → その列でSUMIFS</span>
+=SUMIFS(J:J, L:L, 4)   <span class="comment"># L列に月番号がある場合</span>
+
+<span class="comment"># 作業列なしでSUMPRODUCT（遅いが1セルで完結）</span>
+=SUMPRODUCT((MONTH(B$2:B$1001)=A2)*J$2:J$1001)
+
+<span class="comment"># 四半期判定（INT関数で1〜4に変換）</span>
+=INT((MONTH(B2)-1)/3)+1   <span class="comment"># 1月→1Q, 4月→2Q ...</span></pre>
+</div>
+
+<!-- ⑥ 統計 -->
+<h2 id="stat">⑥ 統計関数</h2>
+<div class="section">
+  <div class="cols2">
+    <div>
+      <h3>基本統計</h3>
+      <table>
+        <tr><th>関数</th><th>意味</th></tr>
+        <tr><td><code>AVERAGE</code></td><td>算術平均</td></tr>
+        <tr><td><code>MEDIAN</code></td><td>中央値（外れ値に強い）</td></tr>
+        <tr><td><code>MODE</code></td><td>最頻値</td></tr>
+        <tr><td><code>MAX / MIN</code></td><td>最大・最小</td></tr>
+        <tr><td><code>MAXIFS / MINIFS</code></td><td>条件付き最大・最小 (365)</td></tr>
+      </table>
+    </div>
+    <div>
+      <h3>散布・分位</h3>
+      <table>
+        <tr><th>関数</th><th>意味</th></tr>
+        <tr><td><code>STDEV</code></td><td>標本標準偏差</td></tr>
+        <tr><td><code>STDEVP</code></td><td>母標準偏差</td></tr>
+        <tr><td><code>VAR / VARP</code></td><td>分散</td></tr>
+        <tr><td><code>PERCENTILE</code></td><td>パーセンタイル(0〜1)</td></tr>
+        <tr><td><code>QUARTILE</code></td><td>四分位(0=min,1=Q1,…)</td></tr>
+      </table>
+    </div>
+  </div>
+  <pre>=MEDIAN(J2:J1001)                          <span class="comment"># 中央値</span>
+=STDEV(J2:J1001)                           <span class="comment"># 標準偏差</span>
+=PERCENTILE(J2:J1001, 0.9)                 <span class="comment"># 上位10%の閾値</span>
+=PERCENTILE(J2:J1001,0.75)-PERCENTILE(J2:J1001,0.25)
+<span class="comment"># IQR（四分位範囲）＝外れ値検知に使う</span>
+
+=MINIFS(J:J, E:E,"東京")                   <span class="comment"># 東京の最小売上（Excel365）</span></pre>
+</div>
+
+<!-- ⑦ ランキング -->
+<h2 id="rank">⑦ ランキング</h2>
+<div class="section">
+  <table>
+    <tr><th>関数</th><th>用途</th><th>例</th></tr>
+    <tr><td><code>LARGE(範囲,n)</code></td><td>n番目に大きい値</td><td><code>=LARGE(J:J,1)</code> → 最大値</td></tr>
+    <tr><td><code>SMALL(範囲,n)</code></td><td>n番目に小さい値</td><td><code>=SMALL(J:J,1)</code> → 最小値</td></tr>
+    <tr><td><code>RANK(値,範囲,0)</code></td><td>降順の順位</td><td><code>=RANK(J2,J$2:J$1001,0)</code></td></tr>
+    <tr><td><code>RANK.EQ</code></td><td>同順位あり</td><td>同値は同じ順位</td></tr>
+    <tr><td><code>RANK.AVG</code></td><td>平均順位</td><td>同値は平均順位</td></tr>
+  </table>
+  <pre>=LARGE(J$2:J$1001, A2)
+<span class="comment"># A列に順位番号(1,2,3…)があるとき、その順位の売上金額</span>
+
+=INDEX(A$2:A$1001, MATCH(LARGE(J$2:J$1001,A2), J$2:J$1001, 0))
+<span class="comment"># 上記と組み合わせて「その取引のID」を返す</span></pre>
+  <div class="warn">同額データが複数あると MATCH は最初の一致しか返さない。RANK関数も同順が複数出る点に注意。</div>
+</div>
+
+<!-- ⑧ テキスト -->
+<h2 id="text">⑧ テキスト関数</h2>
+<div class="section">
+  <table>
+    <tr><th>関数</th><th>用途</th><th>例</th></tr>
+    <tr><td><code>TRIM</code></td><td>前後・連続スペース除去</td><td><code>=TRIM(A2)</code></td></tr>
+    <tr><td><code>LEFT(文字列,n)</code></td><td>先頭n文字</td><td><code>=LEFT(A2,3)</code> → "CUS"</td></tr>
+    <tr><td><code>RIGHT(文字列,n)</code></td><td>末尾n文字</td><td><code>=RIGHT(A2,3)</code></td></tr>
+    <tr><td><code>MID(文字列,開始,n)</code></td><td>途中n文字</td><td><code>=MID(A2,5,3)</code></td></tr>
+    <tr><td><code>LEN</code></td><td>文字数</td><td><code>=LEN(A2)</code></td></tr>
+    <tr><td><code>SUBSTITUTE</code></td><td>文字置換</td><td><code>=SUBSTITUTE(A2," ","")</code></td></tr>
+    <tr><td><code>FIND / SEARCH</code></td><td>文字位置検索</td><td><code>=FIND("-",A2)</code></td></tr>
+    <tr><td><code>TEXT(値,書式)</code></td><td>値→書式付き文字列</td><td><code>=TEXT(B2,"yyyy/mm")</code></td></tr>
+    <tr><td><code>CONCAT / &amp;</code></td><td>文字列結合</td><td><code>=A2&amp;"-"&amp;B2</code></td></tr>
+    <tr><td><code>UPPER / LOWER</code></td><td>大文字・小文字変換</td><td><code>=LOWER(A2)</code></td></tr>
+  </table>
+  <pre>=LEFT(A2, FIND("-",A2)-1)
+<span class="comment"># "TRX-00001" の "-" 前の部分を抽出 → "TRX"</span>
+
+=TEXT(B2,"yyyy") &amp; "年" &amp; TEXT(B2,"m") &amp; "月"
+<span class="comment"># 日付を "2025年1月" 形式の文字列に</span></pre>
+</div>
+
+<!-- ⑨ エラー処理 -->
+<h2 id="error">⑨ エラー処理</h2>
+<div class="section">
+  <table>
+    <tr><th>関数</th><th>対象エラー</th><th>例</th></tr>
+    <tr><td><code>IFERROR(式, 代替値)</code></td><td>すべてのエラー</td><td><code>=IFERROR(VLOOKUP(...),"未登録")</code></td></tr>
+    <tr><td><code>IFNA(式, 代替値)</code></td><td>#N/A のみ</td><td><code>=IFNA(VLOOKUP(...),"")</code></td></tr>
+    <tr><td><code>IF(ISERROR(式), 代替, 式)</code></td><td>古いExcel対応</td><td>IFERROR相当</td></tr>
+  </table>
+  <div class="note">IFERROR は数式バグも隠すので、最終仕上げまで使わずエラーを確認してから追加する習慣を。</div>
+  <pre>=IFERROR(VLOOKUP(A2,'2_商品マスタ'!$A:$D,2,FALSE), "未登録")
+=IFERROR(C2/B2, 0)       <span class="comment"># 0除算(#DIV/0!)を0に</span>
+=IFNA(XLOOKUP(A2,...), "該当なし")</pre>
+</div>
+
+<!-- ⑩ Tips -->
+<h2 id="tips">⑩ 実務 Tips</h2>
+<div class="section">
+
+  <h3>参照の種類 ― F4キーで切り替え</h3>
+  <table>
+    <tr><th>記法</th><th>名前</th><th>コピー時の動き</th></tr>
+    <tr><td><code>A2</code></td><td>相対参照</td><td>行・列どちらもズレる</td></tr>
+    <tr><td><code>$A$2</code></td><td>絶対参照</td><td>ズレない（マスタ範囲に使う）</td></tr>
+    <tr><td><code>$A2</code></td><td>列固定の混合</td><td>行だけズレる（クロス集計の行ヘッダ）</td></tr>
+    <tr><td><code>A$2</code></td><td>行固定の混合</td><td>列だけズレる（クロス集計の列ヘッダ）</td></tr>
+  </table>
+  <div class="tip">クロス集計は行ヘッダを <code>$A2</code>、列ヘッダを <code>B$1</code> にするのが定石。</div>
+
+  <h3>テーブル化（Ctrl + T）の利点</h3>
+  <ul style="margin:8px 0 0 16px; line-height:2">
+    <li>行追加で数式・書式が自動拡張</li>
+    <li>構造化参照: <code>=売上データ[売上金額]</code> のように列名で参照できる</li>
+    <li>フィルタ・並び替えが組み込まれる</li>
+    <li>SUMIF等の範囲が自動で伸縮</li>
+  </ul>
+
+  <h3>数式デバッグの手順</h3>
+  <ol style="margin:8px 0 0 16px; line-height:2">
+    <li>F2 で数式編集モード → 参照セルが色分けされ確認できる</li>
+    <li>数式バーで部分選択 → F9 で部分評価（ESCで戻ること）</li>
+    <li>[数式] タブ → [数式の評価] で段階実行</li>
+    <li>SUMIFS が0になるとき → 条件の型（数値/文字列）を確認</li>
+  </ol>
+
+  <h3>よくあるミス</h3>
+  <table>
+    <tr><th>症状</th><th>原因</th><th>対処</th></tr>
+    <tr><td>SUMIFS が 0 を返す</td><td>数値列に文字列が混入</td><td><code>=VALUE()</code> で変換 / データ確認</td></tr>
+    <tr><td>VLOOKUP が #N/A</td><td>前後スペース、全角半角の違い</td><td><code>=TRIM()</code> 後に検索</td></tr>
+    <tr><td>日付でSUMIFSが効かない</td><td>日付をテキストで持っている</td><td><code>=DATEVALUE()</code> で変換</td></tr>
+    <tr><td>COUNTIF が想定より多い</td><td>ワイルドカード(<code>*</code>)の意図せぬ一致</td><td>完全一致の場合は <code>~*</code> でエスケープ</td></tr>
+  </table>
+
+</div>
+
+<!-- ⑪ パターン集 -->
+<h2 id="patterns">⑪ よく使うパターン集</h2>
+<div class="section">
+
+  <h3>月別集計テーブル（縦型）</h3>
+  <pre><span class="comment"># A列に月番号(1〜12)を入力、B列に以下を入力してコピー</span>
+=SUMPRODUCT((MONTH('1_売上データ'!$B$2:$B$1001)=A2)*'1_売上データ'!$J$2:$J$1001)
+
+<span class="comment"># 前月比</span>
+=IFERROR(B3/B2-1, "")   <span class="comment"># 書式をパーセント表示に</span></pre>
+
+  <h3>地域×カテゴリ クロス集計</h3>
+  <pre><span class="comment"># A列に地域名、1行目にカテゴリ名を置き、B2に入力して全体にコピー</span>
+=SUMIFS('1_売上データ'!$J:$J,
+        '1_売上データ'!$E:$E, $A2,
+        '1_売上データ'!$F:$F, B$1)
+<span class="comment"># $A2 = 行ヘッダ（地域）、B$1 = 列ヘッダ（カテゴリ）</span></pre>
+
+  <h3>ランキング表（取引ID + 金額）</h3>
+  <pre><span class="comment"># A列に順位(1〜10)、B列に金額、C列に取引ID</span>
+B2: =LARGE('1_売上データ'!$J:$J, A2)
+C2: =INDEX('1_売上データ'!$A:$A, MATCH(B2,'1_売上データ'!$J:$J,0))</pre>
+
+  <h3>顧客セグメント分析</h3>
+  <pre><span class="comment"># 顧客別の購入回数・総額・平均をCOUNTIF/SUMIFで集計後、
+# PERCENTILE でセグメント境界を算出</span>
+=PERCENTILE(購入回数範囲, 0.8)   <span class="comment"># 上位20%の境界値</span>
+
+<span class="comment"># セグメント割り当て（IFS関数: Excel2019以降）</span>
+=IFS(C2>=高頻度境界,"ヘビー", C2>=中頻度境界,"ミドル", TRUE,"ライト")</pre>
+
+  <h3>条件付き件数の割合</h3>
+  <pre>=COUNTIF(E:E,"東京") / COUNTA(E2:E1001)
+<span class="comment"># 東京の割合（書式をパーセントに）</span>
+
+=COUNTIFS(D:D,"ゴールド",E:E,"東京") / COUNTIF(D:D,"ゴールド")
+<span class="comment"># ゴールド会員の中で東京の割合</span></pre>
+
+  <h3>外れ値チェック（IQR法）</h3>
+  <pre>Q1  = PERCENTILE(J2:J1001, 0.25)
+Q3  = PERCENTILE(J2:J1001, 0.75)
+IQR = Q3 - Q1
+上限 = Q3 + 1.5 * IQR
+下限 = Q1 - 1.5 * IQR
+
+<span class="comment"># 外れ値の件数</span>
+=COUNTIF(J2:J1001,">"&上限セル) + COUNTIFS(J2:J1001,"<"&下限セル, J2:J1001,"<>0")</pre>
+
+</div>
+
+<p style="text-align:center; color:#AAA; margin-top:28px; font-size:11px;">
+  小売データ分析演習ブック カンニング用チートシート ／ 架空データ使用・個人情報なし
+</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Excel演習：問題・解答・解説</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 44em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap; background-color: #f0f0f0; padding: 0.15em 0.35em; border-radius: 3px; font-size: 0.92em;}
+    pre, pre.sourceCode {
+      background-color: #f5f5f5;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 0.85rem 1rem;
+      font-size: 0.85rem;
+      line-height: 1.45;
+    }
+    pre code, pre.sourceCode code {
+      background: none;
+      padding: 0;
+      font-size: inherit;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      vertical-align: top;
+    }
+    thead th {
+      background-color: #f0f0f0;
+    }
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<h1 id="excel-演習問題解答解説">Excel 演習：問題・解答・解説</h1>
+<p><code>excel.md</code>（Excel実務完全マニュアル）の各機能に対応した演習です。</p>
+<h2 id="用意したファイル">用意したファイル</h2>
+<table>
+<colgroup>
+<col style="width: 62%" />
+<col style="width: 37%" />
+</colgroup>
+<thead>
+<tr>
+<th>ファイル</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>excel_演習_データ.xlsx</strong></td>
+<td>例題用の入力データ（複数シート）</td>
+</tr>
+<tr>
+<td><strong>build_excel_practice.py</strong></td>
+<td>上記 xlsx を再生成するスクリプト（<code>openpyxl</code> が
+<code>Anything/.pydeps</code> にある場合）</td>
+</tr>
+</tbody>
+</table>
+<p>Excel で <code>excel_演習_データ.xlsx</code>
+を開き、各シートの指示と本章の問題に沿って数式を入力してください。</p>
+<hr />
+<h2 id="シート-1_売上">シート <code>1_売上</code></h2>
+<h3 id="問題-1-1sumifs">問題 1-1（SUMIFS）</h3>
+<p><strong>条件</strong>:
+「担当が田中<strong>かつ</strong>月が4<strong>かつ</strong>カテゴリが備品」の金額だけを合計する。</p>
+<ul>
+<li><p><strong>解答（例・F2 セル）</strong><br />
+<code>=SUMIFS(D:D,A:A,4,B:B,"田中",C:C,"備品")</code><br />
+（データが A:D の1行目ヘッダー、2行目からの場合は <code>D2:D100</code>
+のように範囲を絞ってもよい）</p></li>
+<li><p><strong>数式の読み方（引数ごとの解説）</strong></p>
+<table>
+<thead>
+<tr><th>引数の位置</th><th>値</th><th>意味</th></tr>
+</thead>
+<tbody>
+<tr><td>第1引数（合計範囲）</td><td><code>D:D</code></td><td><strong>合計したい数値が入っている列</strong>（＝金額列）。条件に合った行の D 列の値だけが足される</td></tr>
+<tr><td>第2引数（条件範囲1）</td><td><code>A:A</code></td><td>1つ目の条件を調べる列（＝月列）</td></tr>
+<tr><td>第3引数（条件1）</td><td><code>4</code></td><td>A 列が <strong>4</strong>（＝4月）である行だけを対象にする</td></tr>
+<tr><td>第4引数（条件範囲2）</td><td><code>B:B</code></td><td>2つ目の条件を調べる列（＝担当列）</td></tr>
+<tr><td>第5引数（条件2）</td><td><code>"田中"</code></td><td>B 列が <strong>田中</strong> である行だけを対象にする</td></tr>
+<tr><td>第6引数（条件範囲3）</td><td><code>C:C</code></td><td>3つ目の条件を調べる列（＝カテゴリ列）</td></tr>
+<tr><td>第7引数（条件3）</td><td><code>"備品"</code></td><td>C 列が <strong>備品</strong> である行だけを対象にする</td></tr>
+</tbody>
+</table>
+<p>つまり「<strong>A列が4 かつ B列が田中 かつ C列が備品</strong>」をすべて満たす行の D 列（金額）だけを合計する、という意味です。</p></li>
+<li><p><strong>解説</strong><br />
+<code>SUMIFS</code> は
+<strong>合計する列を最初</strong>に書き、その後に「条件範囲1, 条件1,
+条件範囲2, 条件2,
+…」と並べます。条件がすべて満たされた行だけが加算されます。<br />
+構文: <code>=SUMIFS(合計範囲, 条件範囲1, 条件1, [条件範囲2, 条件2], …)</code></p></li>
+<li><p><strong>別の書き方</strong></p>
+<ol type="1">
+<li><p><strong>範囲を明示的に絞る書き方</strong>（推奨：大きなシートではパフォーマンスが向上）<br />
+<code>=SUMIFS(D2:D100,A2:A100,4,B2:B100,"田中",C2:C100,"備品")</code></p></li>
+<li><p><strong>セル参照で条件を指定する書き方</strong>（条件を変えやすい）<br />
+条件をセルに入れておく（例: I2=4, J2="田中", K2="備品"）場合:<br />
+<code>=SUMIFS(D:D,A:A,I2,B:B,J2,C:C,K2)</code></p></li>
+<li><p><strong>SUMPRODUCT で同じ結果を得る書き方</strong>（古い Excel や条件が複雑なとき）<br />
+<code>=SUMPRODUCT((A2:A100=4)*(B2:B100="田中")*(C2:C100="備品")*D2:D100)</code><br />
+※ 各条件を <code>(条件)</code> で囲み <code>*</code> で AND 結合。TRUE=1, FALSE=0 として掛け算で絞り込む仕組み。</p></li>
+<li><p><strong>FILTER を使う書き方</strong>（Excel 365 / Excel 2021 以降）<br />
+<code>=SUM(FILTER(D2:D100,(A2:A100=4)*(B2:B100="田中")*(C2:C100="備品")))</code><br />
+※ FILTER で条件に合う行だけを抽出し、SUM で合計。中間結果を確認しやすい利点がある。</p></li>
+</ol></li>
+</ul>
+<h3 id="問題-1-2sumif">問題 1-2（SUMIF）</h3>
+<p><strong>条件</strong>: カテゴリが「消耗品」の金額合計。</p>
+<ul>
+<li><p><strong>解答（例）</strong><br />
+<code>=SUMIF(C:C,"消耗品",D:D)</code></p></li>
+<li><p><strong>解説</strong><br />
+条件が1つだけなら <code>SUMIF(範囲, 条件, 合計範囲)</code>
+で足ります。</p></li>
+</ul>
+<h3 id="問題-1-3sumproduct">問題 1-3（SUMPRODUCT）</h3>
+<p><strong>条件</strong>:
+下段の見積表（A13:C15：品目・単価・数量）について、<strong>小計列を作らず</strong>に合計金額を1セルで求める。</p>
+<ul>
+<li><p><strong>解答（例・F14）</strong><br />
+<code>=SUMPRODUCT(B14:B15,C14:C15)</code></p></li>
+<li><p><strong>解説</strong><br />
+単価列と数量列を掛け合わせた配列の合計を一度に出します。行が増えたら範囲を
+<code>B14:B20</code> のように広げます。</p></li>
+</ul>
+<hr />
+<h2 id="シート-2_端数_round">シート <code>2_端数_ROUND</code></h2>
+<p>データ: A2＝税抜金額、B2＝税率（0.1＝10%）。</p>
+<h3 id="問題-2-1税込四捨五入">問題 2-1（税込・四捨五入）</h3>
+<p>税込金額を「1円単位で四捨五入」する。</p>
+<ul>
+<li><p><strong>解答（例・D2）</strong><br />
+<code>=ROUND(A2*(1+B2),0)</code></p></li>
+<li><p><strong>解説</strong><br />
+<code>ROUND(数値, 0)</code>
+で小数第1位を四捨五入し、整数円にします。</p></li>
+</ul>
+<h3 id="問題-2-2切り捨て切り上げ">問題 2-2（切り捨て・切り上げ）</h3>
+<p>同じ税込額を、それぞれ円未満切り捨て／切り上げで求める。</p>
+<ul>
+<li><strong>解答（例）</strong>
+<ul>
+<li>切り捨て: <code>=ROUNDDOWN(A2*(1+B2),0)</code><br />
+</li>
+<li>切り上げ: <code>=ROUNDUP(A2*(1+B2),0)</code></li>
+</ul></li>
+<li><strong>解説</strong><br />
+請求・表示ルールに合わせて、端数の扱いを使い分けます。</li>
+</ul>
+<hr />
+<h2 id="シート-3_subtotal">シート <code>3_SUBTOTAL</code></h2>
+<p>データ: A2:B6 が部門と金額の明細（小計行なし）。</p>
+<h3 id="問題-3-1subtotal-と-sum-の違い">問題 3-1（SUBTOTAL と SUM
+の違い）</h3>
+<ol type="1">
+<li>B8 に <code>=SUBTOTAL(9,B2:B6)</code> を入力。<br />
+</li>
+<li>B9 に <code>=SUM(B2:B6)</code> を入力。<br />
+</li>
+<li>1行目にオートフィルタをかけ、「部門」で「営業」だけ表示にする。<br />
+</li>
+<li>B8 と B9 の値がどう変わるか比較する。</li>
+</ol>
+<ul>
+<li><strong>解答（挙動）</strong>
+<ul>
+<li><strong>SUBTOTAL(9, …)</strong> …
+フィルタで<strong>非表示になった行は合計に含めない</strong>。<br />
+</li>
+<li><strong>SUM</strong> …
+非表示行も<strong>含めたまま</strong>合計することが多い（仕様に依存するため、必ず実機で確認）。</li>
+</ul></li>
+<li><strong>解説</strong><br />
+マニュアルのとおり <code>9</code>
+は「合計」です。集計行を表に混在させる場合は、二重計上を避ける設計とセットで使います（本シートは明細のみのシンプル例）。</li>
+</ul>
+<hr />
+<h2 id="シート-4_商品マスタ-5_受注一覧">シート <code>4_商品マスタ</code>
+＋ <code>5_受注一覧</code></h2>
+<p>マスタ: A1:C4（商品コード・商品名・標準単価）。<br />
+受注: A2:D6 に「入力コード」（前後スペースあり）、支店、ステータス。</p>
+<h3 id="問題-5-1trim">問題 5-1（TRIM）</h3>
+<p>A列のコードの前後スペースを除いた値を F 列に出す。</p>
+<ul>
+<li><p><strong>解答（例・F2）</strong><br />
+<code>=TRIM(A2)</code><br />
+下方向へコピー。</p></li>
+<li><p><strong>解説</strong><br />
+マスタ照合の前に Trim すると、VLOOKUP の不一致が減ります。</p></li>
+</ul>
+<h3 id="問題-5-2left">問題 5-2（LEFT）</h3>
+<p>Trim 後のコードの<strong>先頭2文字</strong>を分類コードとして G
+列に出す。</p>
+<ul>
+<li><p><strong>解答（例・G2）</strong><br />
+<code>=LEFT(F2,2)</code></p></li>
+<li><p><strong>解説</strong><br />
+先頭 n 文字で大分類する典型的な使い方です。</p></li>
+</ul>
+<h3 id="問題-5-3vlookup">問題 5-3（VLOOKUP）</h3>
+<p>Trim した商品コードをキーに、<strong>商品名</strong>を H
+列へ（マスタ全体を第2引数に）。</p>
+<ul>
+<li><p><strong>解答（例・H2）</strong><br />
+<code>=VLOOKUP(F2,'4_商品マスタ'!$A$2:$C$4,2,FALSE)</code><br />
+シート名が環境で変わる場合は、マスタ範囲をクリックで指定。</p></li>
+<li><p><strong>解説</strong><br />
+第4引数は <strong>0 または FALSE（完全一致）</strong>
+が鉄則です。列番号は「検索列を1列目としたときの何列目か」です。</p></li>
+</ul>
+<h3 id="問題-5-4xlookupexcel-365-等">問題 5-4（XLOOKUP・Excel 365
+等）</h3>
+<p>同じく商品名を取得。見つからないときは「該当なし」。</p>
+<ul>
+<li><p><strong>解答（例）</strong><br />
+<code>=XLOOKUP(F2,'4_商品マスタ'!$A$2:$A$4,'4_商品マスタ'!$B$2:$B$4,"該当なし")</code></p></li>
+<li><p><strong>解説</strong><br />
+列挿入に強く、第4引数で未検索時の表示を指定できます。未搭載の Excel では
+VLOOKUP + IFERROR で代替します。</p></li>
+</ul>
+<h3 id="問題-5-5iferror">問題 5-5（IFERROR）</h3>
+<p>存在しないコード（例: 手入力で <code>P-9999</code>）を F
+列に置いたとき、VLOOKUP の <strong>#N/A</strong> を空白にする。</p>
+<ul>
+<li><p><strong>解答（例）</strong><br />
+<code>=IFERROR(VLOOKUP(F2,'4_商品マスタ'!$A$2:$C$4,2,FALSE),"")</code></p></li>
+<li><p><strong>解説</strong><br />
+一覧表示や帳票でエラー文字を出したくないときに使います。</p></li>
+</ul>
+<h3 id="問題-5-6countifs">問題 5-6（COUNTIFS）</h3>
+<p>「東京支店」かつ「未入金」の件数を1セルで数える。</p>
+<ul>
+<li><p><strong>解答（例）</strong><br />
+<code>=COUNTIFS(B2:B6,"東京",C2:C6,"未入金")</code></p></li>
+<li><p><strong>解説</strong><br />
+条件が複数あるときは
+<code>COUNTIFS</code>。今回のデータ（B2:B6・C2:C6）では
+<strong>3件</strong> になります。</p></li>
+</ul>
+<h3 id="問題-5-7substitute任意">問題 5-7（SUBSTITUTE・任意）</h3>
+<p>A2
+の文字列から<strong>半角スペースをすべて削除</strong>する（コード内のスペース対策）。</p>
+<ul>
+<li><p><strong>解答（例）</strong><br />
+<code>=SUBSTITUTE(A2," ","")</code></p></li>
+<li><p><strong>解説</strong><br />
+連続スペースや全角スペースが混じる場合は、Trim や複数回の SUBSTITUTE
+と組み合わせます。</p></li>
+</ul>
+<hr />
+<h2 id="シート-6_日付">シート <code>6_日付</code></h2>
+<p>A2＝契約開始日、B2＝納期、C2:C3＝祝日の例（2026/3/20,
+2026/4/29）。</p>
+<h3 id="問題-6-1workday">問題 6-1（WORKDAY）</h3>
+<p>契約開始日から<strong>10営業日後</strong>の日付。祝日は C2:C3
+を除外。</p>
+<ul>
+<li><p><strong>解答（例・E2）</strong><br />
+<code>=WORKDAY(A2,10,C2:C3)</code></p></li>
+<li><p><strong>解説</strong><br />
+第3引数は祝日の<strong>セル範囲</strong>です。土日は自動で除きます。</p></li>
+</ul>
+<h3 id="問題-6-2networkdays">問題 6-2（NETWORKDAYS）</h3>
+<p>A2 から B2 までの<strong>営業日数</strong>（同じく祝日除外）。</p>
+<ul>
+<li><p><strong>解答（例）</strong><br />
+<code>=NETWORKDAYS(A2,B2,C2:C3)</code></p></li>
+<li><p><strong>解説</strong><br />
+開始日・終了日<strong>両方を含む</strong>日数の数え方になります（Excel
+の定義どおり実機で確認してください）。</p></li>
+</ul>
+<h3 id="問題-6-3eomonth">問題 6-3（EOMONTH）</h3>
+<p>「契約開始日がある月の<strong>月末</strong>」と「<strong>翌月</strong>の月末」。</p>
+<ul>
+<li><strong>解答（例）</strong>
+<ul>
+<li>当月月末: <code>=EOMONTH(A2,0)</code><br />
+</li>
+<li>翌月末: <code>=EOMONTH(A2,1)</code></li>
+</ul></li>
+<li><strong>解説</strong><br />
+第2引数 <code>0</code> は当月、<code>1</code> は1ヶ月後の月末です。</li>
+</ul>
+<h3 id="問題-6-4datedif">問題 6-4（DATEDIF）</h3>
+<p>契約開始日から<strong>今日</strong>までの経過月数（または日数）。</p>
+<ul>
+<li><strong>解答（例）</strong>
+<ul>
+<li>月数: <code>=DATEDIF(A2,TODAY(),"M")</code><br />
+</li>
+<li>日数: <code>=DATEDIF(A2,TODAY(),"D")</code></li>
+</ul></li>
+<li><strong>解説</strong><br />
+<code>TODAY()</code> は開いた日によって変わります。第3引数
+<code>"M"</code> <code>"D"</code> <code>"Y"</code>
+などで単位を指定します。</li>
+</ul>
+<hr />
+<h2
+id="第4章実務tipsに相当する演習ブック外の操作">第4章（実務Tips）に相当する演習（ブック外の操作）</h2>
+<p>マニュアル第4章の内容は、次のように<strong>操作だけ</strong>で演習できます（専用シートはありません）。</p>
+<h3 id="問題-t-1入力規則プルダウン">問題
+T-1（入力規則・プルダウン）</h3>
+<p><code>5_受注一覧</code> の「支店」列に、東京／大阪／名古屋
+のみ選べるリストを設定する。</p>
+<ul>
+<li><p><strong>手順の要点</strong><br />
+[データ] → [データの入力規則] → [リスト] → ソースに
+<code>東京,大阪,名古屋</code> またはセル範囲。</p></li>
+<li><p><strong>解説</strong><br />
+表記ゆれを防ぎ、後続の集計・VLOOKUP のミスを減らします。</p></li>
+</ul>
+<h3 id="問題-t-2絶対参照f4">問題 T-2（絶対参照・F4）</h3>
+<p><code>5_受注一覧</code> の H2 に VLOOKUP
+を入れ、<strong>コピーしてもマスタ範囲がズレない</strong>ようにする。</p>
+<ul>
+<li><p><strong>解答の要点</strong><br />
+マスタ範囲を <code>$A$2:$C$4</code> のように <strong>F4</strong>
+で絶対参照にする。</p></li>
+<li><p><strong>解説</strong><br />
+行方向にコピーする場合は、検索値だけ相対参照のままにするのが一般的です。</p></li>
+</ul>
+<h3 id="問題-t-3テーブル化ctrl-t">問題 T-3（テーブル化・Ctrl + T）</h3>
+<p><code>1_売上</code> の明細（A1:D8）を選択し <strong>Ctrl + T</strong>
+でテーブル化する。</p>
+<ul>
+<li><strong>解説</strong><br />
+行追加時に書式や数式の拡張がしやすくなります（Excel
+のバージョンで挙動が多少異なります）。</li>
+</ul>
+<hr />
+<h2 id="正解の確認のしかた">正解の確認のしかた</h2>
+<ul>
+<li>数式の結果は、フィルタや <code>TODAY()</code>
+により環境で変わるものがあります。<br />
+</li>
+<li><strong>手計算</strong>や、別セルに中間結果を置いて、SUM /
+件数が一致するか確認すると理解が進みます。</li>
+</ul>
+<hr />
+<h2 id="xlsx-の再生成">xlsx の再生成</h2>
+<p><code>Anything</code>
+フォルダで、依存関係を置いたうえで次を実行します。</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="va">PYTHONPATH</span><span class="op">=</span><span class="st">&quot;./.pydeps&quot;</span> <span class="ex">python3</span> build_excel_practice.py</span></code></pre></div>
+<p><code>openpyxl</code> が無い場合は
+<code>pip install openpyxl</code>、または
+<code>pip install --target ./.pydeps openpyxl</code> で
+<code>.pydeps</code> に入れてください。</p>
+</body>
+</html>

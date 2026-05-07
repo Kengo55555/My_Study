@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>小売データ分析演習 — 問題と解答</title>
+<style>
+  :root {
+    --blue-dark:#1F4E79; --blue:#2E75B6; --blue-light:#D6E4F7; --blue-pale:#EBF3FB;
+    --green-dark:#375623; --green:#548235; --green-light:#E2EFDA;
+    --yellow:#FFF9C4; --yellow-border:#F9A825;
+    --orange:#C55A11; --red:#C00000;
+    --gray:#F5F5F5; --gray-border:#CCCCCC; --gray-text:#666;
+    --ans-bg:#F0FFF4; --ans-border:#48BB78;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:"Hiragino Sans","Yu Gothic",Meiryo,sans-serif; font-size:13.5px; color:#222; background:#F0F4F8; line-height:1.7; }
+
+  /* ── ヘッダー ── */
+  .site-header { background:var(--blue-dark); color:#fff; padding:20px 0; }
+  .site-header .inner { max-width:960px; margin:0 auto; padding:0 20px; }
+  .site-header h1 { font-size:20px; font-weight:700; letter-spacing:.05em; }
+  .site-header p  { font-size:12px; opacity:.75; margin-top:4px; }
+
+  /* ── メインレイアウト ── */
+  .main { max-width:960px; margin:24px auto; padding:0 20px; }
+
+  /* ── データ概要カード ── */
+  .data-overview { background:#fff; border:1px solid var(--gray-border); border-radius:8px; padding:16px 20px; margin-bottom:24px; }
+  .data-overview h2 { font-size:14px; color:var(--blue-dark); margin-bottom:10px; border-bottom:2px solid var(--blue-light); padding-bottom:6px; }
+  .data-overview .cols { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .data-overview .item { background:var(--blue-pale); border-radius:6px; padding:8px 12px; }
+  .data-overview .item .label { font-size:11px; color:var(--gray-text); }
+  .data-overview .item .val   { font-size:13px; font-weight:bold; color:var(--blue-dark); }
+
+  /* ── 問題カード ── */
+  .q-card { background:#fff; border:1px solid var(--gray-border); border-radius:8px; margin-bottom:20px; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,.06); }
+
+  .q-header { background:var(--blue-dark); color:#fff; padding:10px 18px; display:flex; align-items:center; gap:12px; }
+  .q-num  { background:rgba(255,255,255,.2); border-radius:50%; width:30px; height:30px; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:14px; flex-shrink:0; }
+  .q-title { font-size:14px; font-weight:bold; flex:1; }
+  .q-tag  { font-size:11px; background:rgba(255,255,255,.15); border-radius:12px; padding:2px 8px; white-space:nowrap; }
+
+  .q-body { padding:14px 18px; }
+  .q-desc { background:var(--yellow); border-left:4px solid var(--yellow-border); padding:10px 14px; border-radius:0 6px 6px 0; margin-bottom:12px; font-size:13px; }
+  .q-desc strong { color:var(--orange); }
+
+  .q-task { margin:0 0 10px 0; }
+  .q-task li { margin:4px 0 4px 16px; }
+
+  /* ── 解答トグルボタン ── */
+  .toggle-btn {
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--blue); color:#fff; border:none; border-radius:6px;
+    padding:7px 16px; font-size:13px; font-weight:bold; cursor:pointer;
+    margin:4px 0 12px;
+    transition:background .15s;
+  }
+  .toggle-btn:hover { background:var(--blue-dark); }
+  .toggle-btn .arrow { transition:transform .2s; font-size:10px; }
+  .toggle-btn.open .arrow { transform:rotate(180deg); }
+
+  /* ── 解答セクション ── */
+  .answer { display:none; border-top:2px dashed var(--ans-border); background:var(--ans-bg); padding:14px 18px; }
+  .answer.show { display:block; }
+
+  .ans-section { margin-bottom:14px; }
+  .ans-section h3 { font-size:12px; font-weight:bold; color:var(--green-dark); text-transform:uppercase; letter-spacing:.05em; margin-bottom:6px; }
+
+  /* ── テーブル ── */
+  table { width:100%; border-collapse:collapse; font-size:12.5px; margin:6px 0; }
+  th { background:var(--blue); color:#fff; padding:6px 10px; text-align:center; font-weight:bold; }
+  td { padding:5px 10px; border-bottom:1px solid #E0EEE0; }
+  tr:nth-child(even) td { background:#F0FFF4; }
+  .num { text-align:right; font-variant-numeric:tabular-nums; }
+  .center { text-align:center; }
+  .highlight td { background:#FFFDE7 !important; font-weight:bold; color:var(--orange); }
+  .total-row td { background:#E2EFDA !important; font-weight:bold; }
+
+  /* ── 数式ブロック ── */
+  .formula-block { background:#1E2A3A; border-radius:6px; padding:12px 14px; margin:6px 0; }
+  .formula-block .lang { font-size:10px; color:#7EC8E3; margin-bottom:4px; font-family:monospace; }
+  .formula-block code { display:block; font-family:"Courier New",Consolas,monospace; font-size:12px; color:#A8D8EA; line-height:1.8; white-space:pre; }
+  .formula-block code .cm { color:#6A9955; font-style:italic; }
+  .formula-block code .fn { color:#DCDCAA; }
+  .formula-block code .str{ color:#CE9178; }
+  .formula-block code .num{ color:#B5CEA8; text-align:left; }
+  .formula-block code .kw { color:#569CD6; }
+
+  /* ── ノート・チップ ── */
+  .note { background:#FFF3E0; border-left:4px solid var(--orange); padding:8px 12px; border-radius:0 6px 6px 0; font-size:12px; margin:8px 0; }
+  .tip  { background:var(--green-light); border-left:4px solid var(--green); padding:8px 12px; border-radius:0 6px 6px 0; font-size:12px; margin:8px 0; }
+
+  /* ── バッジ ── */
+  .badge { display:inline-block; border-radius:4px; padding:1px 7px; font-size:11px; font-weight:bold; margin:0 2px; }
+  .badge-blue  { background:var(--blue-dark); color:#fff; }
+  .badge-green { background:var(--green); color:#fff; }
+  .badge-orange{ background:var(--orange); color:#fff; }
+
+  /* ── クロス集計テーブル ── */
+  .cross-table th:first-child { background:var(--blue-dark); }
+  .cross-table td:first-child { background:#EBF3FB; font-weight:bold; text-align:center; }
+  .cross-table .top-val { color:var(--red); font-weight:bold; }
+
+  /* ── 進捗バー ── */
+  .progress-bar { height:6px; background:#E2E8F0; border-radius:3px; margin-top:4px; }
+  .progress-bar .fill { height:100%; border-radius:3px; background:linear-gradient(90deg,var(--blue),var(--blue-dark)); }
+
+  /* ── ページ下部 ── */
+  footer { text-align:center; color:#AAA; font-size:11px; padding:24px 0; }
+
+  @media(max-width:640px){
+    .data-overview .cols { grid-template-columns:1fr 1fr; }
+    .q-tag { display:none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="inner">
+    <h1>小売データ分析演習 — 問題と解答</h1>
+    <p>Excel ファイル「小売データ分析演習.xlsx」の 1_売上データ・2_商品マスタ を使用 ／ 架空データ・個人情報なし</p>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- データ概要 -->
+  <div class="data-overview">
+    <h2>データ概要（1_売上データ シート）</h2>
+    <div class="cols">
+      <div class="item"><div class="label">総取引件数</div><div class="val">1,000 件</div></div>
+      <div class="item"><div class="label">期間</div><div class="val">2025/01/01 〜 2025/12/31</div></div>
+      <div class="item"><div class="label">総売上金額</div><div class="val">59,128,170 円</div></div>
+      <div class="item"><div class="label">カテゴリ数</div><div class="val">6 カテゴリ / 30 商品</div></div>
+      <div class="item"><div class="label">地域</div><div class="val">東京・大阪・名古屋・福岡・札幌</div></div>
+      <div class="item"><div class="label">会員ランク</div><div class="val">ゴールド / シルバー / ブロンズ / 一般</div></div>
+    </div>
+    <div style="margin-top:10px;font-size:12px;color:var(--gray-text)">
+      列構成：A=取引ID　B=取引日　C=顧客ID　D=会員ランク　E=地域　F=カテゴリ　G=商品名　H=単価　I=数量　J=売上金額　K=支払方法
+    </div>
+  </div>
+
+  <!-- ==============================
+       Q1 月別売上合計
+  ============================== -->
+  <div class="q-card">
+    <div class="q-header">
+      <div class="q-num">1</div>
+      <div class="q-title">月別売上合計・前月比</div>
+      <div class="q-tag">SUMPRODUCT / MONTH</div>
+    </div>
+    <div class="q-body">
+      <div class="q-desc">
+        <strong>問題：</strong>2025年の月別売上合計を求め、2月以降の前月比（%）を算出せよ。<br>
+        ヒント：MONTH関数で取引日から月を抽出し、SUMPRODUCT で条件集計する。
+      </div>
+      <ul class="q-task">
+        <li>集計表のB列（売上合計）を埋めよ。A列には 1〜12 の月番号が入っている前提。</li>
+        <li>C列（前月比）は <code>今月÷先月−1</code> で算出し、書式をパーセント表示にせよ。</li>
+      </ul>
+      <button class="toggle-btn" onclick="toggleAnswer(this,'a1')">
+        <span>解答を見る</span><span class="arrow">▼</span>
+      </button>
+      <div id="a1" class="answer">
+        <div class="ans-section">
+          <h3>数式</h3>
+          <div class="formula-block">
+            <div class="lang">Excel Formula</div>
+            <code><span class="cm">' B2（1月売上）— A列に月番号が入っている前提</span>
+=<span class="fn">SUMPRODUCT</span>((<span class="fn">MONTH</span>(<span class="str">'1_売上データ'</span>!$B$2:$B$1001)=A2)*<span class="str">'1_売上データ'</span>!$J$2:$J$1001)
+
+<span class="cm">' C3（2月以降の前月比）</span>
+=<span class="fn">IFERROR</span>(B3/B2-<span class="num">1</span>,<span class="str">""</span>)
+<span class="cm">' → 書式：[赤]▲0.0%;[青]▽0.0%;— でわかりやすく</span></code>
+          </div>
+        </div>
+        <div class="ans-section">
+          <h3>解答（数値）</h3>
+          <table>
+            <thead><tr><th>月</th><th class="num">売上合計（円）</th><th class="num">前月比</th></tr></thead>
+            <tbody>
+              <tr><td class="center">1月</td><td class="num">6,029,400</td><td class="center">—</td></tr>
+              <tr><td class="center">2月</td><td class="num">4,516,920</td><td class="center" style="color:var(--red)">▽25.1%</td></tr>
+              <tr><td class="center">3月</td><td class="num">6,427,920</td><td class="center" style="color:var(--blue)">▲42.3%</td></tr>
+              <tr><td class="center">4月</td><td class="num">2,432,250</td><td class="center" style="color:var(--red)">▽62.2%</td></tr>
+              <tr><td class="center">5月</td><td class="num">6,593,730</td><td class="center" style="color:var(--blue)">▲171.1%</td></tr>
+              <tr><td class="center">6月</td><td class="num">5,362,960</td><td class="center" style="color:var(--red)">▽18.7%</td></tr>
+              <tr><td class="center">7月</td><td class="num">4,194,930</td><td class="center" style="color:var(--red)">▽21.8%</td></tr>
+              <tr><td class="center">8月</td><td class="num">6,210,180</td><td class="center" style="color:var(--blue)">▲48.0%</td></tr>
+              <tr><td class="center">9月</td><td class="num">4,354,610</td><td class="center" style="color:var(--red)">▽29.9%</td></tr>
+              <tr><td class="center">10月</td><td class="num">5,265,780</td><td class="center" style="color:var(--blue)">▲20.9%</td></tr>
+              <tr><td class="center">11月</td><td class="num">4,227,500</td><td class="center" style="color:var(--red)">▽19.7%</td></tr>
+              <tr><td class="center">12月</td><td class="num">3,511,990</td><td class="center" style="color:var(--red)">▽16.9%</td></tr>
+              <tr class="total-row"><td class="center"><strong>合計</strong></td><td class="num"><strong>59,128,170</strong></td><td></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tip">
+          <strong>なぜSUMIFSでなくSUMPRODUCT？</strong><br>
+          SUMIFS の条件範囲に <code>MONTH(B:B)</code> のような関数ネストはできない。SUMPRODUCT なら配列演算なので <code>(MONTH(B:B)=A2)</code> が使える。<br>
+          ※ ヘルパー列（=MONTH(B2) を作業列に展開）を作ってSUMIFSを使うのも高速でOK。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================
+       Q2 カテゴリ別売上
+  ============================== -->
+  <div class="q-card">
+    <div class="q-header">
+      <div class="q-num">2</div>
+      <div class="q-title">カテゴリ別 売上合計・構成比</div>
+      <div class="q-tag">SUMIF / 構成比</div>
+    </div>
+    <div class="q-body">
+      <div class="q-desc">
+        <strong>問題：</strong>6カテゴリ別に売上合計と全体に占める構成比（%）を求めよ。<br>
+        ヒント：A列にカテゴリ名を入力し、SUMIF でカテゴリ条件の合計を出す。
+      </div>
+      <ul class="q-task">
+        <li>B列：各カテゴリの売上合計</li>
+        <li>C列：全カテゴリ合計に対する構成比（書式をパーセントに）</li>
+      </ul>
+      <button class="toggle-btn" onclick="toggleAnswer(this,'a2')">
+        <span>解答を見る</span><span class="arrow">▼</span>
+      </button>
+      <div id="a2" class="answer">
+        <div class="ans-section">
+          <h3>数式</h3>
+          <div class="formula-block">
+            <div class="lang">Excel Formula</div>
+            <code><span class="cm">' B2（カテゴリ別売上合計）— A列にカテゴリ名が入っている前提</span>
+=<span class="fn">SUMIF</span>(<span class="str">'1_売上データ'</span>!$F:$F, A2, <span class="str">'1_売上データ'</span>!$J:$J)
+
+<span class="cm">' C2（構成比）— $B$2:$B$7 が全カテゴリの合計セル範囲</span>
+=B2/<span class="fn">SUM</span>($B$2:$B$7)
+<span class="cm">' または分母を固定セルに出しておく: =B2/$B$9 （B9 に SUM）</span></code>
+          </div>
+        </div>
+        <div class="ans-section">
+          <h3>解答（数値）</h3>
+          <table>
+            <thead><tr><th>カテゴリ</th><th class="num">売上合計（円）</th><th class="num">構成比</th><th>グラフ（イメージ）</th></tr></thead>
+            <tbody>
+              <tr class="highlight"><td>家電</td><td class="num">48,021,500</td><td class="num">81.2%</td><td><div class="progress-bar"><div class="fill" style="width:81.2%"></div></div></td></tr>
+              <tr><td>衣料品</td><td class="num">7,491,400</td><td class="num">12.7%</td><td><div class="progress-bar"><div class="fill" style="width:12.7%"></div></div></td></tr>
+              <tr><td>スポーツ</td><td class="num">2,310,600</td><td class="num">3.9%</td><td><div class="progress-bar"><div class="fill" style="width:3.9%"></div></div></td></tr>
+              <tr><td>食品</td><td class="num">512,460</td><td class="num">0.9%</td><td><div class="progress-bar"><div class="fill" style="width:0.9%"></div></div></td></tr>
+              <tr><td>日用品</td><td class="num">408,650</td><td class="num">0.7%</td><td><div class="progress-bar"><div class="fill" style="width:0.7%"></div></div></td></tr>
+              <tr><td>書籍</td><td class="num">383,560</td><td class="num">0.6%</td><td><div class="progress-bar"><div class="fill" style="width:0.6%"></div></div></td></tr>
+              <tr class="total-row"><td><strong>合計</strong></td><td class="num"><strong>59,128,170</strong></td><td class="num"><strong>100.0%</strong></td><td></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note">家電が売上の81%を占める。これは家電の単価が高い（ノートPC 128,000円等）ことと、取引件数が多い組み合わせによる。件数ベースの構成比も合わせて確認すると分析の深みが出る。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================
+       Q3 地域×カテゴリ クロス集計
+  ============================== -->
+  <div class="q-card">
+    <div class="q-header">
+      <div class="q-num">3</div>
+      <div class="q-title">地域 × カテゴリ クロス集計</div>
+      <div class="q-tag">SUMIFS / 混合参照</div>
+    </div>
+    <div class="q-body">
+      <div class="q-desc">
+        <strong>問題：</strong>地域（行：東京〜札幌）× カテゴリ（列：家電〜書籍）のクロス集計表を作れ。<br>
+        ポイント：<strong>混合参照</strong>を使い、数式を1つ入力してコピーだけで全セル埋まるようにせよ。
+      </div>
+      <ul class="q-task">
+        <li>行ヘッダ（A列）に地域名、列ヘッダ（1行目）にカテゴリ名を置く</li>
+        <li>B2 に数式を入力し、全体（B2:G6）にコピーして完成させる</li>
+      </ul>
+      <button class="toggle-btn" onclick="toggleAnswer(this,'a3')">
+        <span>解答を見る</span><span class="arrow">▼</span>
+      </button>
+      <div id="a3" class="answer">
+        <div class="ans-section">
+          <h3>数式（B2 に入力 → 全体にコピー）</h3>
+          <div class="formula-block">
+            <div class="lang">Excel Formula</div>
+            <code>=<span class="fn">SUMIFS</span>(<span class="str">'1_売上データ'</span>!$J:$J,
+        <span class="str">'1_売上データ'</span>!$E:$E, $A2,   <span class="cm">' ← 列を固定（地域）</span>
+        <span class="str">'1_売上データ'</span>!$F:$F, B$1)   <span class="cm">' ← 行を固定（カテゴリ）</span>
+
+<span class="cm">' $A2  = 列$固定・行相対 → 横にコピーしても地域列はA列のまま</span>
+<span class="cm">' B$1  = 列相対・行$固定 → 縦にコピーしてもカテゴリ行は1行目のまま</span></code>
+          </div>
+        </div>
+        <div class="ans-section">
+          <h3>解答（数値・単位：円）</h3>
+          <table class="cross-table">
+            <thead>
+              <tr><th>地域＼カテゴリ</th><th class="num">家電</th><th class="num">衣料品</th><th class="num">食品</th><th class="num">日用品</th><th class="num">スポーツ</th><th class="num">書籍</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>東京</td><td class="num top-val">14,732,920</td><td class="num">2,342,000</td><td class="num">180,280</td><td class="num">135,150</td><td class="num">899,700</td><td class="num">116,800</td></tr>
+              <tr><td>大阪</td><td class="num">11,259,120</td><td class="num">1,707,700</td><td class="num">121,330</td><td class="num">118,000</td><td class="num">394,700</td><td class="num">101,680</td></tr>
+              <tr><td>名古屋</td><td class="num">9,060,360</td><td class="num">1,511,000</td><td class="num">91,490</td><td class="num">56,650</td><td class="num">385,000</td><td class="num">44,340</td></tr>
+              <tr><td>福岡</td><td class="num">7,992,420</td><td class="num">1,347,700</td><td class="num">74,980</td><td class="num">51,900</td><td class="num">363,300</td><td class="num">62,000</td></tr>
+              <tr><td>札幌</td><td class="num">4,976,680</td><td class="num">583,000</td><td class="num">44,380</td><td class="num">46,950</td><td class="num">267,900</td><td class="num">58,740</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tip">
+          <strong>混合参照の黄金ルール：</strong><br>
+          クロス集計は「<code>$A2</code>（行ヘッダ）× <code>B$1</code>（列ヘッダ）」の組み合わせが定石。F4 を押すたびに <code>A2 → $A$2 → A$2 → $A2</code> と切り替わる。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================
+       Q4 会員ランク別
+  ============================== -->
+  <div class="q-card">
+    <div class="q-header">
+      <div class="q-num">4</div>
+      <div class="q-title">会員ランク別 平均購入金額・件数・合計</div>
+      <div class="q-tag">AVERAGEIF / COUNTIF / SUMIF</div>
+    </div>
+    <div class="q-body">
+      <div class="q-desc">
+        <strong>問題：</strong>4つの会員ランク別に、①平均購入金額、②取引件数、③売上合計をそれぞれ求めよ。
+      </div>
+      <ul class="q-task">
+        <li>A列に会員ランク名（ゴールド / シルバー / ブロンズ / 一般）を入力</li>
+        <li>B列：AVERAGEIF　C列：COUNTIF　D列：SUMIF</li>
+      </ul>
+      <button class="toggle-btn" onclick="toggleAnswer(this,'a4')">
+        <span>解答を見る</span><span class="arrow">▼</span>
+      </button>
+      <div id="a4" class="answer">
+        <div class="ans-section">
+          <h3>数式</h3>
+          <div class="formula-block">
+            <div class="lang">Excel Formula</div>
+            <code><span class="cm">' B2（平均購入金額）</span>
+=<span class="fn">AVERAGEIF</span>(<span class="str">'1_売上データ'</span>!$D:$D, A2, <span class="str">'1_売上データ'</span>!$J:$J)
+
+<span class="cm">' C2（取引件数）</span>
+=<span class="fn">COUNTIF</span>(<span class="str">'1_売上データ'</span>!$D:$D, A2)
+
+<span class="cm">' D2（売上合計）</span>
+=<span class="fn">SUMIF</span>(<span class="str">'1_売上データ'</span>!$D:$D, A2, <span class="str">'1_売上データ'</span>!$J:$J)</code>
+          </div>
+        </div>
+        <div class="ans-section">
+          <h3>解答（数値）</h3>
+          <table>
+            <thead><tr><th>会員ランク</th><th class="num">平均購入金額</th><th class="num">取引件数</th><th class="num">売上合計</th></tr></thead>
+            <tbody>
+              <tr><td>ゴールド</td><td class="num">75,484</td><td class="num">94</td><td class="num">7,095,520</td></tr>
+              <tr><td>シルバー</td><td class="num">69,542</td><td class="num">198</td><td class="num">13,769,390</td></tr>
+              <tr><td>ブロンズ</td><td class="num">53,142</td><td class="num">325</td><td class="num">17,271,280</td></tr>
+              <tr><td>一般</td><td class="num">54,809</td><td class="num">383</td><td class="num">20,991,980</td></tr>
+              <tr class="total-row"><td><strong>合計</strong></td><td class="num">—</td><td class="num"><strong>1,000</strong></td><td class="num"><strong>59,128,170</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note">ゴールド会員の平均購入金額が最大（75,484円）だが、件数は最少（94件）。一般会員が件数最多（383件）で売上合計も最大。ランク別の件数比率も確認してみよう。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================
+       Q5 支払方法別
+  ============================== -->
+  <div class="q-card">
+    <div class="q-header">
+      <div class="q-num">5</div>
+      <div class="q-title">支払方法別 件数・売上合計・平均単価</div>
+      <div class="q-tag">COUNTIF / SUMIF / IFERROR</div>
+    </div>
+    <div class="q-body">
+      <div class="q-desc">
+        <strong>問題：</strong>4つの支払方法別に、①件数、②売上合計、③平均単価（合計÷件数）を求めよ。<br>
+        ③は件数が0のときエラーにならないようIFERRORを使え。
+      </div>
+      <button class="toggle-btn" onclick="toggleAnswer(this,'a5')">
+        <span>解答を見る</span><span class="arrow">▼</span>
+      </button>
+      <div id="a5" class="answer">
+        <div class="ans-section">
+          <h3>数式</h3>
+          <div class="formula-block">
+            <div class="lang">Excel Formula</div>
+            <code>=<span class="fn">COUNTIF</span>(<span class="str">'1_売上データ'</span>!$K:$K, A2)         <span class="cm">' B列：件数</span>
+=<span class="fn">SUMIF</span>(<span class="str">'1_売上データ'</span>!$K:$K, A2, <span class="str">'1_売上データ'</span>!$J:$J)  <span class="cm">' C列：売上合計</span>
+=<span class="fn">IFERROR</span>(C2/B2, <span class="str">""</span>)                   <span class="cm">' D列：平均（0除算回避）</span></code>
+          </div>
+        </div>
+        <div class="ans-section">
+          <h3>解答（数値）</h3>
+          <table>
+            <thead><tr><th>支払方法</th><th class="num">件数</th><th class="num">売上合計（円）</th><th class="num">平均単価（円）</th></tr></thead>
+            <tbody>
+              <tr><td>クレジットカード</td><td class="num">243</td><td class="num">15,205,400</td><td class="num">62,573</td></tr>
+              <tr><td>現金</td><td class="num">258</td><td class="num">11,111,210</td><td class="num">43,066</td></tr>
+              <tr><td>電子マネー</td><td class="num">262</td><td class="num">16,109,180</td><td class="num">61,485</td></tr>
+              <tr class="highlight"><td>QRコード決済</td><td class="num">237</td><td class="num">16,702,380</td><td class="num">70,474</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note">QRコード決済は件数最少ながら売上合計・平均単価ともに最大。高額商品の購入に使われている可能性がある。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================
+       Q6 複合条件
+  ============================== -->
+  <div class="q-card">
+    <div class="q-header">
+      <div class="q-num">6</div>
+      <div class="q-title">複合条件集計（5問）</div>
+      <div class="q-tag">SUMIFS / COUNTIFS / SUMPRODUCT</div>
+    </div>
+    <div class="q-body">
+      <div class="q-desc">
+        <strong>問題：</strong>次の5つの値を1セルの数式で求めよ。いずれも作業列は使わないこと。
+      </div>
+      <ul class="q-task">
+        <li>① ゴールド会員 かつ 東京 の売上合計</li>
+        <li>② 家電 かつ クレジットカード の取引件数</li>
+        <li>③ 2025年 Q2（4月〜6月）の売上合計</li>
+        <li>④ 売上金額が 10,000円超 の取引件数</li>
+        <li>⑤ 大阪 かつ ブロンズ会員 かつ 食品 の売上合計</li>
+      </ul>
+      <button class="toggle-btn" onclick="toggleAnswer(this,'a6')">
+        <span>解答を見る</span><span class="arrow">▼</span>
+      </button>
+      <div id="a6" class="answer">
+        <div class="ans-section">
+          <h3>数式と解答</h3>
+          <div class="formula-block">
+            <div class="lang">Excel Formula</div>
+            <code><span class="cm">' ① ゴールド会員 × 東京 の売上合計</span>
+=<span class="fn">SUMIFS</span>(<span class="str">'1_売上データ'</span>!$J:$J, <span class="str">'1_売上データ'</span>!$D:$D,<span class="str">"ゴールド"</span>, <span class="str">'1_売上データ'</span>!$E:$E,<span class="str">"東京"</span>)
+<span class="cm">' → 3,893,540</span>
+
+<span class="cm">' ② 家電 × クレジットカード の件数</span>
+=<span class="fn">COUNTIFS</span>(<span class="str">'1_売上データ'</span>!$F:$F,<span class="str">"家電"</span>, <span class="str">'1_売上データ'</span>!$K:$K,<span class="str">"クレジットカード"</span>)
+<span class="cm">' → 70</span>
+
+<span class="cm">' ③ Q2（4〜6月）売上合計 — 日付範囲はDATEで指定</span>
+=<span class="fn">SUMIFS</span>(<span class="str">'1_売上データ'</span>!$J:$J,
+    <span class="str">'1_売上データ'</span>!$B:$B,<span class="str">">="</span>&<span class="fn">DATE</span>(<span class="num">2025</span>,<span class="num">4</span>,<span class="num">1</span>),
+    <span class="str">'1_売上データ'</span>!$B:$B,<span class="str">"<"</span>&<span class="fn">DATE</span>(<span class="num">2025</span>,<span class="num">7</span>,<span class="num">1</span>))
+<span class="cm">' → 14,388,940（SUMPRODUCT版: (MONTH>=4)*(MONTH<=6)*J でも可）</span>
+
+<span class="cm">' ④ 売上金額 10,000円超 の件数 — 演算子は文字列で</span>
+=<span class="fn">COUNTIF</span>(<span class="str">'1_売上データ'</span>!$J:$J, <span class="str">">10000"</span>)
+<span class="cm">' → 454</span>
+
+<span class="cm">' ⑤ 大阪 × ブロンズ × 食品 の売上合計（3条件）</span>
+=<span class="fn">SUMIFS</span>(<span class="str">'1_売上データ'</span>!$J:$J,
+    <span class="str">'1_売上データ'</span>!$E:$E,<span class="str">"大阪"</span>,
+    <span class="str">'1_売上データ'</span>!$D:$D,<span class="str">"ブロンズ"</span>,
+    <span class="str">'1_売上データ'</span>!$F:$F,<span class="str">"食品"</span>)
+<span class="cm">' → 32,090</span></code>
+          </div>
+        </div>
+        <div class="ans-section">
+          <h3>解答一覧</h3>
+          <table>
+            <thead><tr><th>問</th><th>内容</th><th class="num">答え</th></tr></thead>
+            <tbody>
+              <tr><td class="center">①</td><td>ゴールド会員 × 東京 の売上合計</td><td class="num">3,893,540 円</td></tr>
+              <tr><td class="center">②</td><td>家電 × クレジットカード の件数</td><td class="num">70 件</td></tr>
+              <tr><td class="center">③</td><td>Q2（4〜6月）の売上合計</td><td class="num">14,388,940 円</td></tr>
+              <tr><td class="center">④</td><td>売上金額 10,000円超 の件数</td><td class="num">454 件</td></tr>
+              <tr><td class="center">⑤</td><td>大阪 × ブロンズ × 食品 の売上合計</td><td class="num">32,090 円</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tip">③の日付範囲は <code>"&gt;="&amp;DATE(2025,4,1)</code> のように <code>&amp;</code> で結合する。直接 <code>"&gt;=2025/4/1"</code> と書くと日付シリアル値として認識されず誤動作することがある。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================
+       Q7 VLOOKUP
+  ============================== -->
+  <div class="q-card">
+    <div class="q-header">
+      <div class="q-num">7</div>
+      <div class="q-title">商品マスタ参照</div>
+      <div class="q-tag">VLOOKUP / XLOOKUP / IFERROR</div>
+    </div>
+    <div class="q-body">
+      <div class="q-desc">
+        <strong>問題：</strong>2_商品マスタ シートを参照し、以下の商品コードに対応する①商品名（VLOOKUP）、②カテゴリ（XLOOKUP）、③標準単価（IFERROR付きVLOOKUP）を求めよ。<br>
+        P-999 は存在しないコード — エラー表示を「未登録」に変換せよ。
+      </div>
+      <table style="margin:10px 0; font-size:12.5px; width:auto">
+        <thead><tr><th>検索コード</th></tr></thead>
+        <tbody>
+          <tr><td class="center">P-001</td></tr><tr><td class="center">P-007</td></tr>
+          <tr><td class="center">P-015</td></tr><tr><td class="center">P-025</td></tr>
+          <tr><td class="center" style="color:var(--red)">P-999（存在しない）</td></tr>
+        </tbody>
+      </table>
+      <button class="toggle-btn" onclick="toggleAnswer(this,'a7')">
+        <span>解答を見る</span><span class="arrow">▼</span>
+      </button>
+      <div id="a7" class="answer">
+        <div class="ans-section">
+          <h3>数式</h3>
+          <div class="formula-block">
+            <div class="lang">Excel Formula</div>
+            <code><span class="cm">' B列：VLOOKUP で商品名（2列目）</span>
+=<span class="fn">VLOOKUP</span>(A2, <span class="str">'2_商品マスタ'</span>!$A:$D, <span class="num">2</span>, <span class="kw">FALSE</span>)
+
+<span class="cm">' C列：XLOOKUP でカテゴリ（Excel 365/2021）</span>
+=<span class="fn">XLOOKUP</span>(A2, <span class="str">'2_商品マスタ'</span>!$A:$A, <span class="str">'2_商品マスタ'</span>!$C:$C, <span class="str">"該当なし"</span>)
+
+<span class="cm">' D列：IFERROR + VLOOKUP で標準単価（未登録コードは「未登録」）</span>
+=<span class="fn">IFERROR</span>(<span class="fn">VLOOKUP</span>(A2, <span class="str">'2_商品マスタ'</span>!$A:$D, <span class="num">4</span>, <span class="kw">FALSE</span>), <span class="str">"未登録"</span>)</code>
+          </div>
+        </div>
+        <div class="ans-section">
+          <h3>解答（数値）</h3>
+          <table>
+            <thead><tr><th>商品コード</th><th>商品名（VLOOKUP）</th><th>カテゴリ（XLOOKUP）</th><th class="num">標準単価（IFERROR）</th></tr></thead>
+            <tbody>
+              <tr><td class="center">P-001</td><td>スマートフォン</td><td>家電</td><td class="num">89,800</td></tr>
+              <tr><td class="center">P-007</td><td>ジャケット</td><td>衣料品</td><td class="num">18,000</td></tr>
+              <tr><td class="center">P-015</td><td>ナッツ</td><td>食品</td><td class="num">980</td></tr>
+              <tr><td class="center">P-025</td><td>スポーツウェア</td><td>スポーツ</td><td class="num">6,500</td></tr>
+              <tr style="color:var(--red)"><td class="center">P-999</td><td>#N/A → IFERROR で「未登録」</td><td>該当なし</td><td class="num" style="color:var(--red)">未登録</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="tip">
+          VLOOKUPの列番号（第3引数）はマスタ左端からの列数。列を挿入するとズレるため、本番では XLOOKUP か INDEX+MATCH の使用を推奨。<br>
+          IFERROR は最後に付ける習慣を — 先に数式が正しいか確認してからエラーを隠す。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================
+       Q8 ランキング
+  ============================== -->
+  <div class="q-card">
+    <div class="q-header">
+      <div class="q-num">8</div>
+      <div class="q-title">売上ランキング TOP 10</div>
+      <div class="q-tag">LARGE / INDEX+MATCH</div>
+    </div>
+    <div class="q-body">
+      <div class="q-desc">
+        <strong>問題：</strong>1〜10位の売上金額（LARGE）と、その金額の取引ID（INDEX+MATCH）を求めよ。<br>
+        ヒント：A列に順位番号（1〜10）を入力し、B・C列に数式を入れてコピーする。
+      </div>
+      <button class="toggle-btn" onclick="toggleAnswer(this,'a8')">
+        <span>解答を見る</span><span class="arrow">▼</span>
+      </button>
+      <div id="a8" class="answer">
+        <div class="ans-section">
+          <h3>数式</h3>
+          <div class="formula-block">
+            <div class="lang">Excel Formula</div>
+            <code><span class="cm">' B2（n位の売上金額）— A列に順位番号</span>
+=<span class="fn">LARGE</span>(<span class="str">'1_売上データ'</span>!$J:$J, A2)
+
+<span class="cm">' C2（その取引ID）</span>
+=<span class="fn">INDEX</span>(<span class="str">'1_売上データ'</span>!$A:$A, <span class="fn">MATCH</span>(B2, <span class="str">'1_売上データ'</span>!$J:$J, <span class="num">0</span>))</code>
+          </div>
+        </div>
+        <div class="ans-section">
+          <h3>解答（数値）</h3>
+          <table>
+            <thead><tr><th>順位</th><th class="num">売上金額</th><th>取引ID（INDEX+MATCH）</th><th>商品</th></tr></thead>
+            <tbody>
+              <tr class="highlight"><td class="center">1</td><td class="num">640,000</td><td class="center">TRX-00006</td><td>ノートPC × 5個</td></tr>
+              <tr><td class="center">2〜10</td><td class="num">640,000</td><td class="center">同上（※注意）</td><td>ノートPC × 5個（同額）</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note">
+          <strong>⚠️ 重要な注意点：</strong><br>
+          TOP10 はすべて「ノートPC × 5個 = 640,000円」で同額のため、<code>LARGE</code> は全て 640,000 を返す。<br>
+          <code>MATCH</code> は最初にヒットした行しか返さないため、C列の取引IDが全て同じになる（正確なランキング表にはならない）。<br>
+          同額多数のケースには <code>RANK</code> + 補助列、または <code>SORTBY</code>（Excel365）を使うのがベター。
+        </div>
+        <div class="tip">
+          <strong>ボーナス問題：</strong>家電を除いた場合のTOP10はどうなるか？<br>
+          <code>=LARGE(IF('1_売上データ'!$F$2:$F$1001&lt;&gt;"家電",'1_売上データ'!$J$2:$J$1001),A2)</code><br>
+          （Excel365なら通常入力可。旧バージョンは Ctrl+Shift+Enter で配列数式として入力）
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================
+       Q9 顧客別集計
+  ============================== -->
+  <div class="q-card">
+    <div class="q-header">
+      <div class="q-num">9</div>
+      <div class="q-title">顧客別 購入回数・総購入額・平均購入単価</div>
+      <div class="q-tag">COUNTIF / SUMIF</div>
+    </div>
+    <div class="q-body">
+      <div class="q-desc">
+        <strong>問題：</strong>下記5顧客について、①購入回数、②総購入額、③平均購入単価（②÷①）を求めよ。
+      </div>
+      <table style="margin:10px 0; font-size:12.5px; width:auto">
+        <thead><tr><th>顧客ID</th></tr></thead>
+        <tbody>
+          <tr><td class="center">CUS-001</td></tr><tr><td class="center">CUS-010</td></tr>
+          <tr><td class="center">CUS-050</td></tr><tr><td class="center">CUS-100</td></tr>
+          <tr><td class="center">CUS-200</td></tr>
+        </tbody>
+      </table>
+      <button class="toggle-btn" onclick="toggleAnswer(this,'a9')">
+        <span>解答を見る</span><span class="arrow">▼</span>
+      </button>
+      <div id="a9" class="answer">
+        <div class="ans-section">
+          <h3>数式</h3>
+          <div class="formula-block">
+            <div class="lang">Excel Formula</div>
+            <code><span class="cm">' B2（購入回数）</span>
+=<span class="fn">COUNTIF</span>(<span class="str">'1_売上データ'</span>!$C:$C, A2)
+
+<span class="cm">' C2（総購入額）</span>
+=<span class="fn">SUMIF</span>(<span class="str">'1_売上データ'</span>!$C:$C, A2, <span class="str">'1_売上データ'</span>!$J:$J)
+
+<span class="cm">' D2（平均購入単価）</span>
+=<span class="fn">IFERROR</span>(C2/B2, <span class="str">""</span>)</code>
+          </div>
+        </div>
+        <div class="ans-section">
+          <h3>解答（数値）</h3>
+          <table>
+            <thead><tr><th>顧客ID</th><th class="num">購入回数</th><th class="num">総購入額（円）</th><th class="num">平均購入単価（円）</th></tr></thead>
+            <tbody>
+              <tr><td class="center">CUS-001</td><td class="num">2</td><td class="num">328,120</td><td class="num">164,060</td></tr>
+              <tr><td class="center">CUS-010</td><td class="num">4</td><td class="num">21,050</td><td class="num">5,263</td></tr>
+              <tr><td class="center">CUS-050</td><td class="num">4</td><td class="num">53,800</td><td class="num">13,450</td></tr>
+              <tr><td class="center">CUS-100</td><td class="num">4</td><td class="num">16,500</td><td class="num">4,125</td></tr>
+              <tr class="highlight"><td class="center">CUS-200</td><td class="num">2</td><td class="num">402,000</td><td class="num">201,000</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note">CUS-200 は購入回数2回で総購入額が最大（402,000円）。高単価商品（ノートPC等）を購入している可能性が高い。CUS-010・CUS-100 は購入回数は多いが単価が低い傾向。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================
+       Q10 統計分析
+  ============================== -->
+  <div class="q-card">
+    <div class="q-header">
+      <div class="q-num">10</div>
+      <div class="q-title">統計分析</div>
+      <div class="q-tag">MEDIAN / STDEV / PERCENTILE / MAX / MIN</div>
+    </div>
+    <div class="q-body">
+      <div class="q-desc">
+        <strong>問題：</strong>売上金額列（J列）について、以下の統計量を求めよ。
+      </div>
+      <ul class="q-task">
+        <li>① 中央値（MEDIAN）</li>
+        <li>② 標準偏差（STDEV）</li>
+        <li>③ 90パーセンタイル（PERCENTILE）</li>
+        <li>④ 最大値（MAX）/ 最小値（MIN）</li>
+        <li>⑤ 四分位範囲 IQR = Q3（75%ile）− Q1（25%ile）</li>
+      </ul>
+      <button class="toggle-btn" onclick="toggleAnswer(this,'a10')">
+        <span>解答を見る</span><span class="arrow">▼</span>
+      </button>
+      <div id="a10" class="answer">
+        <div class="ans-section">
+          <h3>数式</h3>
+          <div class="formula-block">
+            <div class="lang">Excel Formula</div>
+            <code>=<span class="fn">MEDIAN</span>(<span class="str">'1_売上データ'</span>!$J$2:$J$1001)          <span class="cm">' ① 中央値</span>
+=<span class="fn">STDEV</span>(<span class="str">'1_売上データ'</span>!$J$2:$J$1001)           <span class="cm">' ② 標本標準偏差（n-1）</span>
+=<span class="fn">PERCENTILE</span>(<span class="str">'1_売上データ'</span>!$J$2:$J$1001, <span class="num">0.9</span>)  <span class="cm">' ③ 90パーセンタイル</span>
+=<span class="fn">MAX</span>(<span class="str">'1_売上データ'</span>!$J:$J)                   <span class="cm">' ④ 最大値</span>
+=<span class="fn">MIN</span>(<span class="str">'1_売上データ'</span>!$J$2:$J$1001)           <span class="cm">' ④ 最小値（ヘッダ行除く）</span>
+
+<span class="cm">' ⑤ IQR = Q3 - Q1</span>
+=<span class="fn">PERCENTILE</span>(<span class="str">'1_売上データ'</span>!$J$2:$J$1001,<span class="num">0.75</span>)
+ -<span class="fn">PERCENTILE</span>(<span class="str">'1_売上データ'</span>!$J$2:$J$1001,<span class="num">0.25</span>)</code>
+          </div>
+        </div>
+        <div class="ans-section">
+          <h3>解答（数値）</h3>
+          <table>
+            <thead><tr><th>統計量</th><th class="num">値</th><th>解釈</th></tr></thead>
+            <tbody>
+              <tr><td>① 中央値（Median）</td><td class="num">7,500 円</td><td>分布の中心。平均より外れ値の影響が小さい</td></tr>
+              <tr><td>② 標準偏差（StdDev）</td><td class="num">119,354 円</td><td>平均からのばらつき幅。非常に大きい→高分散</td></tr>
+              <tr><td>③ 90パーセンタイル</td><td class="num">256,000 円</td><td>上位10%の閾値。これ以上は要注目取引</td></tr>
+              <tr><td>④ 最大値（MAX）</td><td class="num">640,000 円</td><td>ノートPC × 5個</td></tr>
+              <tr><td>④ 最小値（MIN）</td><td class="num">350 円</td><td>歯ブラシ × 1個</td></tr>
+              <tr class="highlight"><td>⑤ IQR（Q3−Q1）</td><td class="num">45,000 円</td><td>Q1=2,400 / Q3=47,400。中央50%のレンジ</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note">
+          <strong>分布の読み方：</strong><br>
+          中央値（7,500円）と標準偏差（119,354円）の乖離が大きい＝右裾が非常に長い分布。<br>
+          IQR法での外れ値上限 = Q3 + 1.5×IQR = 47,400 + 67,500 = <strong>114,900円</strong>。<br>
+          この上限を超える取引件数：<code>=COUNTIF(J:J,"&gt;114900")</code> で確認してみよう。
+        </div>
+        <div class="tip">
+          <strong>STDEV vs STDEVP：</strong><br>
+          STDEV（標本標準偏差・n−1）はサンプルから母集団を推定する場合。<br>
+          STDEVP（母標準偏差・n）はデータ全体が母集団である場合。今回は1,000件が全データのためSTDEVPも可。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ボーナス問題 -->
+  <div class="q-card" style="border-color:var(--orange)">
+    <div class="q-header" style="background:var(--orange)">
+      <div class="q-num">★</div>
+      <div class="q-title">ボーナス問題 — 総合分析</div>
+      <div class="q-tag">自由課題</div>
+    </div>
+    <div class="q-body">
+      <div class="q-desc" style="border-color:var(--orange); background:#FFF3E0">
+        <strong>問題：</strong>以下のビジネス課題に対してどんな集計・分析を行うか、数式も含めて自分で設計せよ。
+      </div>
+      <ul class="q-task">
+        <li>① 月別×カテゴリ別の売上推移を見たい（季節性・トレンドを探す）</li>
+        <li>② 「優良顧客」を定義し（例：購入回数3回以上 かつ 総購入額10万円以上）、その人数と売上貢献度を出す</li>
+        <li>③ 各カテゴリの「平均客単価」を求め、最も客単価が高いカテゴリを特定する</li>
+        <li>④ 支払方法と会員ランクのクロス集計をして、ランク別の支払傾向を分析する</li>
+      </ul>
+      <div class="tip" style="margin-top:8px">解答は1つではありません。どのアプローチを選ぶかが実務での「分析設計力」です。</div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  小売データ分析演習 ／ 架空データ使用・個人情報なし ／ Excel ファイル「小売データ分析演習.xlsx」対応
+</footer>
+
+<script>
+function toggleAnswer(btn, id) {
+  const ans = document.getElementById(id);
+  const isOpen = ans.classList.contains('show');
+  ans.classList.toggle('show', !isOpen);
+  btn.classList.toggle('open', !isOpen);
+  btn.querySelector('span:first-child').textContent = isOpen ? '解答を見る' : '解答を隠す';
+}
+</script>
+</body>
+</html>
